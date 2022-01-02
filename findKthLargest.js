@@ -4,59 +4,42 @@
  * @param {number} k
  * @return {number}
  */
- var findKthLargest = function (nums, k) {
-    let sorted = seperate(nums);
-    let length = sorted.length;
-
-    return sorted[length - k];
+var findKthLargest = function (nums, k) {
+    quickSort(nums, 0, nums.length - 1);
+    return nums[nums.length - k];
 };
 
-function seperate(arr) {
-    let length = arr.length;
-
-    if (length > 2) {
-        let leftLength = Math.floor(length / 2);
-        let left = arr.splice(0, leftLength);
-        return mergeArr(seperate(left), seperate(arr));
+function quickSort(nums, left, right) {
+    if (right - left < 1) {
+        return;
     }
 
-    if (length === 1) {
-        return arr;
-    }
+    const target = nums[left];
+    let pivot = left;
 
-    if (length === 2) {
-        let first = arr[0];
-        let second = arr[1];
-
-        if (first > second) return [second, first];
-
-        return arr;
-    }
-
-    return result;
-}
-
-function mergeArr(left, right) {
-    let result = [];
-
-    while (left.length && right.length) {
-        let leftValue = left[0];
-        let rightValue = right[0];
-
-        if (leftValue < rightValue) {
-            result.push(leftValue);
-            left.shift();
-        } else {
-            result.push(rightValue);
-            right.shift();
+    for (let i = left + 1; i <= right; i++) {
+        const compare = nums[i];
+        if (compare <= target) {
+            if (i === pivot + 1) {
+                // append
+                pivot = i;
+            } else {
+                // swap
+                pivot = pivot + 1;
+                nums[i] = nums[pivot];
+                nums[pivot] = compare;
+            }
         }
     }
 
-    if (left.length > 0) {
-        result = [...result, ...left];
-    } else if (right.length > 0) {
-        result = [...result, ...right];
+    if (pivot !== left) {
+        nums[left] = nums[pivot];
+        nums[pivot] = target;
     }
 
-    return result;
+    // left
+    quickSort(nums, left, pivot - 1);
+
+    // right
+    quickSort(nums, pivot + 1, right);
 }
